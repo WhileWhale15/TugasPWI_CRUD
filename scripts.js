@@ -1,6 +1,6 @@
 var data;
 var ActivePageNumber = 1;
-var PageSize = 5;
+var PageSize = 15;
 var PageTo;
 var PageFrom;
 var rowCount;
