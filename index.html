@@ -33,7 +33,7 @@
         <div class="table-title">
           <div class="row">
             <div class="col-sm-6">
-              <h2>Manage <b>Employees</b></h2>
+              <h2>Manage Employees</h2>
             </div>
             <div class="col-sm-3">
               <div class="input-group">
@@ -105,7 +105,7 @@
     <div id="addEmployeeModal" class="modal fade">
       <div class="modal-dialog">
         <div class="modal-content">
-          <form onsubmit="fncAdd()">
+          <form onsubmit="fncAdd()" action="process.php" method="POST">
             <div class="modal-header">
               <h4 class="modal-title">Add Employee</h4>
               <button
@@ -123,6 +123,7 @@
                 <input
                   type="text"
                   id="txtName"
+                  name="txtName"
                   class="form-control"
                   required=""
                   placeholder="ex: Sarah"
@@ -133,6 +134,7 @@
                 <input
                   type="text"
                   id="txtProfession"
+                  name="txtProfession"
                   class="form-control"
                   required=""
                   placeholder="ex: Doctor"
@@ -141,10 +143,10 @@
               <div class="form-group">
                 <label for="age">Age</label>
                 <input
-                  name="age"
                   type="text"
                   class="form-control"
                   id="txtAge"
+                  name="txtAge"
                   required=""
                   maxlength="3"
                   onkeypress="return onlyNumbers(event);"
@@ -159,6 +161,7 @@
                 data-dismiss="modal"
                 value="Cancel"
               />
+              <input type="hidden" name="action" id="action" value="add" />
               <input type="submit" class="btn btn-success" value="Add" />
             </div>
           </form>
@@ -232,5 +235,6 @@
     <div class="myAlert-top alert alert-success" style="display: none">
       <strong>Success!</strong> <span id="spnMsg"></span>
     </div>
+    <p>Created by Affifah Aulia Zahra</p>
   </body>
 </html>

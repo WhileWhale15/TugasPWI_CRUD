@@ -300,6 +300,10 @@ table.table .avatar {
 }
 
 @media (max-width: 767px) {
+  .col-sm-6 h2 {
+    margin-bottom: 5px;
+  }
+
   .table-title .col-sm-12 {
     width: 100%;
   }
@@ -311,6 +315,10 @@ table.table .avatar {
 }
 
 @media (max-width: 360px) {
+  .col-sm-6 h2 {
+    margin-bottom: 5px;
+  }
+
   [id^="deleteEmployeeModa"] .modal .modal-header,
   .modal .modal-body,
   .modal .modal-footer {

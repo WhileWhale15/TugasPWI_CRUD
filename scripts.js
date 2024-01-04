@@ -6,81 +6,32 @@ var PageFrom;
 var rowCount;
 var MaxId = 0;
 var SuccessTime = 3000;
+
 $(document).ready(function () {
   console.log($(window).width() + "x" + $(window).height());
-  data = [
-    {
-      id: 2,
-      name: "Wenonah",
-      profession: "Automation Specialist III",
-      age: 60,
-    },
-    {
-      id: 3,
-      name: "Murdock",
-      profession: "Structural Engineer",
-      age: 33,
-    },
-    { id: 4, name: "Reinhold", profession: "Operator", age: 53 },
-    { id: 5, name: "Enoch", profession: "Developer III", age: 39 },
-    { id: 6, name: "Bonita", profession: "Director of Sales", age: 68 },
-    {
-      id: 7,
-      name: "Tod",
-      profession: "Systems Administrator III",
-      age: 86,
-    },
-    { id: 8, name: "Patrick", profession: "General Manager", age: 47 },
-    { id: 9, name: "Layla", profession: "Assistant Professor", age: 7 },
-    {
-      id: 10,
-      name: "Dee dee",
-      profession: "Staff Accountant IV",
-      age: 10,
-    },
-    { id: 11, name: "Luciano", profession: "Geologist IV", age: 75 },
-    {
-      id: 12,
-      name: "Martainn",
-      profession: "Mechanical Systems Engineer",
-      age: 11,
-    },
-    {
-      id: 13,
-      name: "Grete",
-      profession: "Automation Specialist I",
-      age: 5,
-    },
-    {
-      id: 14,
-      name: "Roderick",
-      profession: "Software Consultant",
-      age: 73,
-    },
-    {
-      id: 15,
-      name: "Obadias",
-      profession: "Staff Accountant I",
-      age: 65,
-    },
-    {
-      id: 16,
-      name: "Norri",
-      profession: "Account Representative II",
-      age: 6,
-    },
-    { id: 17, name: "Annecorinne", profession: "Teacher", age: 47 },
-    { id: 18, name: "Vikki", profession: "Electrical Engineer", age: 88 },
-    { id: 19, name: "Austin", profession: "Web Developer III", age: 49 },
-    {
-      id: 20,
-      name: "Cindie",
-      profession: "Staff Accountant III",
-      age: 19,
-    },
-  ];
+
+  data = JSON.parse(localStorage.getItem("employeeData")) || [];
+
+  if (data.length === 0) {
+    data = [
+      {
+        id: 2,
+        name: "Wenonah",
+        profession: "Automation Specialist III",
+        age: 60,
+      },
+      { id: 3, name: "Murdock", profession: "Structural Engineer", age: 33 },
+      { id: 4, name: "Reinhold", profession: "Operator", age: 53 },
+      { id: 5, name: "Enoch", profession: "Developer III", age: 39 },
+    ];
+  }
+
   getByText();
 });
+
+function saveDataToLocalStorage() {
+  localStorage.setItem("employeeData", JSON.stringify(data));
+}
 
 function fncPagingClick(anchor) {
   $("#ulPagination .active").removeClass("active");
@@ -220,6 +171,9 @@ function BindEnter(event) {
 
 function fncUpdate(index) {
   event.preventDefault();
+  var id = data[index].id;
+
+  $("#txtEditId").val(id);
   data[index].name = $("#txtEditName").val();
   data[index].profession = $("#txtEditProfession").val();
   data[index].age = $("#txtEditAge").val();
@@ -227,6 +181,24 @@ function fncUpdate(index) {
   $("#editEmployeeModal input:text").val("");
   showMessage("row updated successfully.");
   getByText();
+
+  saveDataToLocalStorage();
+
+  $.ajax({
+    type: "POST",
+    url: "process.php",
+    data: $("#editform").serialize(),
+    success: function (response) {
+      var result = JSON.parse(response);
+      if (result.status === "success") {
+        showMessage(result.message);
+        getByText();
+      }
+    },
+    error: function () {
+      showMessage("Error occurred while updating the record.");
+    },
+  });
 }
 
 function fncEdit(id) {
@@ -253,6 +225,24 @@ function fncAdd() {
     $("#addEmployeeModal input:text").val("");
     showMessage("row added successfully.");
     getByText();
+
+    saveDataToLocalStorage();
+
+    $.ajax({
+      type: "POST",
+      url: "process.php",
+      data: $("#addEmployeeModal form").serialize(),
+      success: function (response) {
+        var result = JSON.parse(response);
+        if (result.status === "success") {
+          showMessage(result.message);
+          getByText();
+        }
+      },
+      error: function () {
+        showMessage("Error occurred while adding the record.");
+      },
+    });
   }
 }
 
@@ -261,10 +251,27 @@ function fncDelete(val, modal) {
   var index = getIndexOf(val);
   if (index > -1) {
     data.splice(index, 1);
+    saveDataToLocalStorage();
     $("#deleteEmployeeModal" + val).modal("hide");
     $("body").removeClass("modal-open");
     $(".modal-backdrop").remove();
     showMessage("row deleted successfully.");
     getByText();
   }
+
+  $.ajax({
+    type: "POST",
+    url: "process.php",
+    data: { action: "delete", txtDeleteId: val }, // Send employee ID to delete
+    success: function (response) {
+      var result = JSON.parse(response);
+      if (result.status === "success") {
+        showMessage(result.message);
+        getByText();
+      }
+    },
+    error: function () {
+      showMessage("Error occurred while deleting the record.");
+    },
+  });
 }
